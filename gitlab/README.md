@@ -211,16 +211,6 @@ ping docker-server.com
 
 ## Gitlab Server / OpenSSL Setup
 
-makeコマンドによるショートカットを以下に示す。
-
-| 順序 | makeコマンド | 操作内容 |
-| --- | --- | --- |
-| 1 | make openssl-backup | バックアップ |
-| 2 | make openssl-genkey | .keyファイル作成 |
-| 3 | make openssl-gencsr | .csrファイル作成 |
-| 4 | make openssl-gencrt | .crtファイル作成 |
-| 5 | make openssl-check | 証明書の確認 |
-
 [Create an SSL certificate for Apache](https://docs.bitnami.com/ibm/infrastructure/lamp/administration/create-ssl-certificate-apache/)を参考に以下のコマンドで証明書を作り直す。
 
 ``` bash
@@ -250,15 +240,13 @@ sudo gitlab-ctl restart
 gitlab-server側で以下のコマンドで確認する。
 
 ``` bash
-cd ~/sample_docker/gitlab/gitlab-server
-make openssl-check
+openssl s_client -connect 10.0.11.11:443 -showcerts < /dev/null
 ```
 
 docker-server側で以下のコマンドで確認する。
 
 ``` bash
-cd ~/sample_docker/gitlab/docker-server
-make openssl-check
+openssl s_client -connect 10.0.11.11:443 -showcerts < /dev/null
 ```
 
 openssl-checkの判定方法を以下に示す。
@@ -267,6 +255,16 @@ openssl-checkの判定方法を以下に示す。
 | Verify return code: 18 (self signed certificate) | OK |
 | Verify return code: 9 (certificate is not yet valid) | NG |
 | その他 | 要調査 |
+
+本項のmakeコマンドによるショートカットを以下に示す。
+
+| 順序 | makeコマンド | 操作内容 |
+| --- | --- | --- |
+| 1 | make openssl-backup | バックアップ |
+| 2 | make openssl-genkey | .keyファイル作成 |
+| 3 | make openssl-gencsr | .csrファイル作成 |
+| 4 | make openssl-gencrt | .crtファイル作成 |
+| 5 | make openssl-check | 証明書の確認 |
 
 ## Docker Server / Docker Setup
 
@@ -307,17 +305,6 @@ https://localhost:11443 にアクセスし、guestでログインする。
 
 ### Gitlab-Runner (On Server)
 
-makeコマンドによるショートカットを以下に示す。
-
-| 順序 | makeコマンド | 操作内容 |
-| --- | --- | --- |
-| 1 | make runner-setup | セットアップ（レジストリ登録／インストール／証明書配置） |
-| 2 | make runner-register | Runner登録 |
-| 3 | make runner-config | Runner設定編集 |
-| opt | make runner-unregister | Runner削除 |
-| opt | make runner-delete | Runner強制削除 |
-| opt | make runner-list | Runner一覧 |
-
 gitlab-runnerのリポジトリを登録し、インストールしたのち、gitlab-runnerに証明書を配置する。
 
 ``` bash
@@ -349,22 +336,18 @@ sudo gitlab-runner register
 environment = ["GIT_SSL_NO_VERIFY=true"]
 ```
 
-その他のGitlab-Runnerの操作はMakefileを参照。
-
-
-### Gitlab-Runner (On Docker)
-
-makeコマンドによるショートカットを以下に示す。
+本項のmakeコマンドによるショートカットを以下に示す。
 
 | 順序 | makeコマンド | 操作内容 |
 | --- | --- | --- |
-| 1 | make runner-docker-setup | セットアップ（ダウンロード／起動／証明書配置） |
-| 2 | make runner-docker-register | Runner登録 |
-| 3 | make runner-docker-config | Runner設定編集 |
-| opt | make runner-docker-unregister | Runner削除 |
-| opt | make runner-docker-delete | Runner強制削除 |
-| opt | make runner-docker-list | Runner一覧 |
+| 1 | make runner-setup | セットアップ（レジストリ登録／インストール／証明書配置） |
+| 2 | make runner-register | Runner登録 |
+| 3 | make runner-config | Runner設定編集 |
+| opt | make runner-unregister | Runner削除 |
+| opt | make runner-delete | Runner強制削除 |
+| opt | make runner-list | Runner一覧 |
 
+### Gitlab-Runner (On Docker)
 
 gitlab-runnerのイメージをダウンロードし、起動したのち、gitlab-runnerに証明書を配置する。
 
@@ -394,6 +377,16 @@ sudo docker exec -it runner gitlab-runner register
 environment = ["GIT_SSL_NO_VERIFY=true"]
 ```
 
+本項のmakeコマンドによるショートカットを以下に示す。
+
+| 順序 | makeコマンド | 操作内容 |
+| --- | --- | --- |
+| 1 | make runner-docker-setup | セットアップ（ダウンロード／起動／証明書配置） |
+| 2 | make runner-docker-register | Runner登録 |
+| 3 | make runner-docker-config | Runner設定編集 |
+| opt | make runner-docker-unregister | Runner削除 |
+| opt | make runner-docker-delete | Runner強制削除 |
+| opt | make runner-docker-list | Runner一覧 |
 
 
 

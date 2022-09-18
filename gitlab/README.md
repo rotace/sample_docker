@@ -16,8 +16,8 @@ VirtualboxのNATネットワークを使用する
 | router | 10.0.11.1 | - | Virtualboxのデフォルト |
 | host | 10.0.11.2 | - | Virtualboxのデフォルト | 
 | dhcp | 10.0.11.3 | - | Virtualboxのデフォルト | 
-| gitlab-server | 10.0.11.11 | gitlab-server.com | 起動順序１ |
-| docker-server | 10.0.11.12 | docker-server.com | 起動順序２ |
+| gitlab-server | 10.0.11.11 | gitlab-server.local |  |
+| docker-server | 10.0.11.12 | docker-server.local |  |
 
 ## Port-Forwarding
 
@@ -101,19 +101,6 @@ sudo systemctl enable ssh
 sudo systemctl start ssh
 ```
 
-## Gitlab Server / DNS Install
-
-1. ホストOSのコマンドプロンプトからbitnamiでログインする
-1. 以下のコマンドを実行してDNSをインストールする
-
-``` bash
-sudo apt update
-sudo apt install nano dnsmasq
-sudo systemctl start dnsmasq
-sudo systemctl enable dnsmasq
-dig @localhost www.google.com
-```
-
 ## Gitlab Server / Tools Install
 
 1. ホストOSのコマンドプロンプトからbitnamiでログインする
@@ -123,6 +110,7 @@ dig @localhost www.google.com
 sudo apt update
 sudo apt install git
 git clone http://github.com/rotace/sample_docker
+cd sample_docker/gitlab/gitlab-server
 ```
 
 ## Docker Server / Setup
@@ -161,19 +149,123 @@ git clone http://github.com/rotace/sample_docker
 1. 以下のコマンドを実行して本リポジトリをダウンロードする
 
 ``` bash
+sudo apt update
+sudo apt install make
 git clone http://github.com/rotace/sample_docker
+cd sample_docker/gitlab/docker_server
 ```
 
+## Gitlab Server / DNS Setup
 
-## Docker Server / Gitlab Runner Install
-
-1. gitlab-runnerのリポジトリを登録し、インストールする
+以下のコマンドを実行してDNSをインストールする。
 
 ``` bash
-cd sample_docker/gitlab/docker_server
+sudo apt update
+sudo apt install nano dnsmasq
+sudo systemctl start dnsmasq
+sudo systemctl enable dnsmasq
+sudo ufw allow 53
+```
+
+以下のコマンドで確認する。
+
+``` bash
+# gitlab-server側
+dig @localhost www.google.com
+# docker-server側
+dig @10.0.11.11 www.google.com
+```
+
+```sudo nano /etc/hosts```を実行し解決アドレスを記載する。
+
+``` bash
+10.0.11.11 gitlab-server.local
+10.0.11.12 docker-server.local
+```
+
+DNSサーバを再起動する。
+
+``` bash
+sudo systemctl restart dnsmasq
+```
+
+以下のコマンドで確認する。
+
+``` bash
+# gitlab-server側
+dig @localhost gitlab-server.local
+dig @localhost docker-server.local
+# docker-server側
+dig @10.0.11.11 gitlab-server.local
+dig @10.0.11.11 docker-server.local
+```
+
+## Gitlab Server / OpenSSL Setup
+
+[Create an SSL certificate for Apache](https://docs.bitnami.com/ibm/infrastructure/lamp/administration/create-ssl-certificate-apache/)を参考に以下のコマンドで証明書を作り直す。
+
+``` bash
+cd /etc/gitlab/ssl
+sudo mv server.crt server.crt.back
+sudo mv server.key server.key.back
+sudo openssl genrsa -out server.key 2048
+sudo openssl req -new -key server.key -out cert.csr
+  Country Name: JP
+  State Name: Tokyo
+  Locality Name: Chiyoda
+  Organization Name: Sample Gitlab
+  Organization Unit Name:
+  Common Name: gitlab-server.local
+  Email Address: gitlab-server.local
+  A challenge passward:
+  Optional Company Name:
+sudo openssl x509 -in  cert.csr -out  server.crt -req -signkey server.key -days 3650
+sudo gitlab-ctl restart
+```
+
+以下のコマンドで確認する。
+
+``` bash
+# gitlab-server側
+cd ~/sample_docker/gitlab/gitlab-server
+make openssl-check
+# docker-server側
+cd ~/sample_docker/gitlab/docker-server
+make openssl-check
+```
+
+openssl-checkの判定方法を以下に示す。
+| 結果 | 判定 |
+| --- | --- |
+| Verify return code: 18 (self signed certificate) | OK |
+| Verify return code: 9 (certificate is not yet valid) | NG |
+| その他 | 要調査 |
+
+
+## Docker Server / Gitlab Runner Setup
+
+gitlab-runnerのリポジトリを登録し、インストールする。
+
+``` bash
 make register-gitlab-runner-repository
 sudo apt instsall gitlab-runner
 ```
+
+```sudo nano /etc/docker/daemon.json```を実行しDNSアドレスを記載する。
+
+``` json
+{
+    "dns":["10.0.11.11"]
+}
+```
+
+gitlab-runnerに証明書を配置する。
+
+``` bash
+cd ~/sample_docker/gitlab/docker-server
+make openssl-register
+```
+
 
 
 

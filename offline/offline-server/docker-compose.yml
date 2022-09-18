@@ -1,0 +1,53 @@
+version: '3'
+
+volumes:
+  web_data:
+  # gitlab_etc:
+  # gitlab_log:
+  # gitlab_opt:
+  # gitlab_runner_etc:
+
+services: 
+
+  # gitlab:
+  #   image: localhost:5000/gitlab
+  #   restart: always
+  #   hostname: gitlab.local-docker.com
+  #   volumes:
+  #     - gitlab_etc:/etc/gitlab
+  #     - gitlab_log:/var/log/gitlab
+  #     - gitlab_opt:/var/opt/gitlab
+  #   environment:
+  #     GITLAB_OMNIBUS_CONFIG: |
+  #       external_url 'http://gitlab:8929'
+  #       gitlab_rails['gitlab_shell_ssh_port'] = 2224
+  #   ports:
+  #     - "8929:8929"
+  #     - "2224:22"
+
+  # runner:
+  #   image: localhost:5000/gitlab-runner
+  #   restart: always
+  #   hostname: gitlab-runner.local-docker.com
+  #   # links:
+  #   #   - gitlab
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - gitlab_runner_etc:/etc/gitlab-runner
+
+  web:
+    image: localhost:5000/httpd
+    container_name: web1
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - web_data:/usr/local/apache2/htdocs
+
+  # ubuntu:
+  #   image: localhost:5000/ubuntu
+  #   container_name: ubuntu1
+  #   restart: always
+  #   tty: true
+  #   volumes:
+  #     - web_data:/usr/local/apache2/htdocs

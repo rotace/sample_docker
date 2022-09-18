@@ -1,3 +1,5 @@
+include ../../Makefile
+
 GITLAB_HOST=10.0.11.11
 DOCKER_HOST=10.0.11.12
 

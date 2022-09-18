@@ -1,6 +1,11 @@
 # Gitlab
 Gitlabとの連携環境構築サンプル
 
+| フォルダ名 | 内容 |
+| --- | --- |
+| gitlab-server | gitlab-server側で使用するツール |
+| docker-server | docker-server側で使用するツール |
+
 ## Requirement
 
 * [Virtualbox 6.1 or above](https://www.virtualbox.org/)
@@ -390,8 +395,17 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
 
 
 
-# Reference
+## Reference
 
+### 全般
+* [GitLab CIでテスト・ビルド・デプロイを自動化する](https://qiita.com/bremen/items/f47f383b9931a840a25c)
+* [docker-composeを使ってGitLab / Runner のローカル環境](https://tsyama.hatenablog.com/entry/docker-local-gitlab-and-runner)
+* [0からGitlabCEを立ち上げてPagesを公開するまで](https://qiita.com/horit/items/a4e3c0888ab7f5ab2f2a)
+* [Gitlab CI/CD 基本編 チュートリアルで感覚をつかむ](https://www.insight-tec.com/tech-blog/20200929_gitlab/)
+* [Gitlab CI/CD 実践編 Gitlab Pagesを使ったドキュメントのホスティング](https://www.insight-tec.com/tech-blog/ci-cd/20201119_gitlab/)
+* [Gitlab CI/CD 発展編 Gitlab Runnerの使い方](https://www.insight-tec.com/tech-blog/ci-cd/20201222_gitlab_runner/)
+
+### 公式ドキュメント
 * [Gitlab Docs](https://docs.gitlab.com/ee/)
   * [Troubleshooting SSL](https://docs.gitlab.com/ee/administration/troubleshooting/ssl.html)
   * [Use Docker to build Docker images](https://docs.gitlab.com/ee/ci/docker/using_docker_build.html)
@@ -399,13 +413,11 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
   * [Gitlab Runner](https://docs.gitlab.com/runner/)
     * [Run Gitlab Runner in a container](https://docs.gitlab.com/runner/install/docker.html)
     * [Registering runners](https://docs.gitlab.com/runner/register/index.html)
-* [Gitlab CI/CD 基本編 チュートリアルで感覚をつかむ](https://www.insight-tec.com/tech-blog/20200929_gitlab/)
-* [Gitlab CI/CD 実践編 Gitlab Pagesを使ったドキュメントのホスティング](https://www.insight-tec.com/tech-blog/ci-cd/20201119_gitlab/)
-* [Gitlab CI/CD 発展編 Gitlab Runnerの使い方](https://www.insight-tec.com/tech-blog/ci-cd/20201222_gitlab_runner/)
+
+### Tips
 * [備忘録：Gitlab Runnerの登録手順](https://qiita.com/hisato_imanishi/items/28bbe6f05f8e62d1ef62)
 * [Dockerコンテナ上にGitlab Runnerを構築してGitlabに登録する](https://satolabo.net/2020/04/22/regist-docker-gitlab-runner/)
 * [オレオレ証明書なGitlabサーバにGitlab Runnerを登録する](https://qiita.com/tamanugi/items/170bb2bcf35a86d3111c)
-* [0からGitlabCEを立ち上げてPagesを公開するまで](https://qiita.com/horit/items/a4e3c0888ab7f5ab2f2a)
-* [Gitlab-CI Runner: 事故署名証明書を無視する](https://www.web-dev-qa-db-ja.com/ja/go/gitlabci%E3%83%A9%E3%83%B3%E3%83%8A%E3%83%BC%EF%BC%9A%E8%87%AA%E5%B7%B1%E7%BD%B2%E5%90%8D%E8%A8%BC%E6%98%8E%E6%9B%B8%E3%82%92%E7%84%A1%E8%A6%96%E3%81%99%E3%82%8B/831725762/)
+* [Gitlab-CI Runner: 自己署名証明書を無視する](https://www.web-dev-qa-db-ja.com/ja/go/gitlabci%E3%83%A9%E3%83%B3%E3%83%8A%E3%83%BC%EF%BC%9A%E8%87%AA%E5%B7%B1%E7%BD%B2%E5%90%8D%E8%A8%BC%E6%98%8E%E6%9B%B8%E3%82%92%E7%84%A1%E8%A6%96%E3%81%99%E3%82%8B/831725762/)
 * [HTTP化したGitlab Runnerが「SSL certificate problem...」になる](https://satolabo.net/2020/06/07/gitlab-runner-ssl-certificate-problem/)
 * [Bitnami：Enable HTTPS Support With NGINX](https://docs.bitnami.com/bch/manage-servers-from-aws-console/)

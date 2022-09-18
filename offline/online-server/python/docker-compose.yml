@@ -1,0 +1,6 @@
+version: '3'
+services: 
+  compiler:
+    build: .
+    image: localhost:5000/python
+    container_name: python1

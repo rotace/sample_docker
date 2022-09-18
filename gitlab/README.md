@@ -165,44 +165,44 @@ sudo systemctl enable dnsmasq
 sudo ufw allow 53
 ```
 
-以下のコマンドで確認する。
+gitlab-server側で以下のコマンドで確認する。
 
 ``` bash
-# gitlab-server側
 dig @localhost www.google.com
-# docker-server側
+```
+
+docker-server側で以下のコマンドで確認する。
+
+``` bash
 dig @10.0.11.11 www.google.com
 ```
+
 
 ```sudo nano /etc/hosts```を実行し解決アドレスを記載する。
 
 ``` bash
-# gitlab-server側
 10.0.11.11 gitlab-server.com
 10.0.11.12 docker-server.com
-# docker-server側
-# 無し
 ```
 
-各サービスを再起動する。
+DNSサーバを再起動する。
 
 ``` bash
-# gitlab-server側
 sudo systemctl restart dnsmasq
-# docker-server側
-sudo systemctl restart systemd-resolved
-sudo reboot now
 ```
 
-以下のコマンドで確認する。
+gitlab-server側で以下のコマンドで確認する。
 
 ``` bash
-# gitlab-server側
 dig @localhost gitlab-server.com
 dig @localhost docker-server.com
 ping gitlab-server.com
 ping docker-server.com
-# docker-server側
+```
+
+docker-server側で以下のコマンドで確認する。
+
+``` bash
 dig @10.0.11.11 gitlab-server.com
 dig @10.0.11.11 docker-server.com
 ping gitlab-server.com
@@ -210,6 +210,16 @@ ping docker-server.com
 ```
 
 ## Gitlab Server / OpenSSL Setup
+
+makeコマンドによるショートカットを以下に示す。
+
+| 順序 | makeコマンド | 操作内容 |
+| --- | --- | --- |
+| 1 | make openssl-backup | バックアップ |
+| 2 | make openssl-genkey | .keyファイル作成 |
+| 3 | make openssl-gencsr | .csrファイル作成 |
+| 4 | make openssl-gencrt | .crtファイル作成 |
+| 5 | make openssl-check | 証明書の確認 |
 
 [Create an SSL certificate for Apache](https://docs.bitnami.com/ibm/infrastructure/lamp/administration/create-ssl-certificate-apache/)を参考に以下のコマンドで証明書を作り直す。
 
@@ -237,13 +247,16 @@ Gitlabを再起動する。
 sudo gitlab-ctl restart
 ```
 
-以下のコマンドで確認する。
+gitlab-server側で以下のコマンドで確認する。
 
 ``` bash
-# gitlab-server側
 cd ~/sample_docker/gitlab/gitlab-server
 make openssl-check
-# docker-server側
+```
+
+docker-server側で以下のコマンドで確認する。
+
+``` bash
 cd ~/sample_docker/gitlab/docker-server
 make openssl-check
 ```
@@ -294,6 +307,17 @@ https://localhost:11443 にアクセスし、guestでログインする。
 
 ### Gitlab-Runner (On Server)
 
+makeコマンドによるショートカットを以下に示す。
+
+| 順序 | makeコマンド | 操作内容 |
+| --- | --- | --- |
+| 1 | make runner-setup | セットアップ（レジストリ登録／インストール／証明書配置） |
+| 2 | make runner-register | Runner登録 |
+| 3 | make runner-config | Runner設定編集 |
+| opt | make runner-unregister | Runner削除 |
+| opt | make runner-delete | Runner強制削除 |
+| opt | make runner-list | Runner一覧 |
+
 gitlab-runnerのリポジトリを登録し、インストールしたのち、gitlab-runnerに証明書を配置する。
 
 ``` bash
@@ -327,21 +351,20 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
 
 その他のGitlab-Runnerの操作はMakefileを参照。
 
-``` bash
-cd ~/sample_docker/gitlab/docker-server
-# セットアップ（レジストリ登録／インストール／証明書配置）
-make runner-setup
-# Runner登録
-make runner-register
-# Runner削除
-make runner-unregister
-# Runner一覧
-make runner-list
-# Runner設定
-make runner-config
-```
 
 ### Gitlab-Runner (On Docker)
+
+makeコマンドによるショートカットを以下に示す。
+
+| 順序 | makeコマンド | 操作内容 |
+| --- | --- | --- |
+| 1 | make runner-docker-setup | セットアップ（ダウンロード／起動／証明書配置） |
+| 2 | make runner-docker-register | Runner登録 |
+| 3 | make runner-docker-config | Runner設定編集 |
+| opt | make runner-docker-unregister | Runner削除 |
+| opt | make runner-docker-delete | Runner強制削除 |
+| opt | make runner-docker-list | Runner一覧 |
+
 
 gitlab-runnerのイメージをダウンロードし、起動したのち、gitlab-runnerに証明書を配置する。
 
@@ -371,21 +394,6 @@ sudo docker exec -it runner gitlab-runner register
 environment = ["GIT_SSL_NO_VERIFY=true"]
 ```
 
-その他のGitlab-Runnerの操作はMakefileを参照。
-
-``` bash
-cd ~/sample_docker/gitlab/docker-server
-# セットアップ（ダウンロード／起動／証明書配置）
-make runner-docker-setup
-# Runner登録
-make runner-docker-register
-# Runner削除
-make runner-docker-unregister
-# Runner一覧
-make runner-docker-list
-# Runner設定
-make runner-docker-config
-```
 
 
 
@@ -398,9 +406,9 @@ make runner-docker-config
   * [Gitlab Runner](https://docs.gitlab.com/runner/)
     * [Run Gitlab Runner in a container](https://docs.gitlab.com/runner/install/docker.html)
     * [Registering runners](https://docs.gitlab.com/runner/register/index.html)
-* [Gitlab CI/CD 基本編 ~チュートリアルで感覚をつかむ~](https://www.insight-tec.com/tech-blog/20200929_gitlab/)
-* [Gitlab CI/CD 実践編 ~Gitlab Pagesを使ったドキュメントのホスティング](https://www.insight-tec.com/tech-blog/ci-cd/20201119_gitlab/)
-* [Gitlab CI/CD 発展編 ~Gitlab Runnerの使い方~](https://www.insight-tec.com/tech-blog/ci-cd/20201222_gitlab_runner/)
+* [Gitlab CI/CD 基本編 チュートリアルで感覚をつかむ](https://www.insight-tec.com/tech-blog/20200929_gitlab/)
+* [Gitlab CI/CD 実践編 Gitlab Pagesを使ったドキュメントのホスティング](https://www.insight-tec.com/tech-blog/ci-cd/20201119_gitlab/)
+* [Gitlab CI/CD 発展編 Gitlab Runnerの使い方](https://www.insight-tec.com/tech-blog/ci-cd/20201222_gitlab_runner/)
 * [備忘録：Gitlab Runnerの登録手順](https://qiita.com/hisato_imanishi/items/28bbe6f05f8e62d1ef62)
 * [Dockerコンテナ上にGitlab Runnerを構築してGitlabに登録する](https://satolabo.net/2020/04/22/regist-docker-gitlab-runner/)
 * [オレオレ証明書なGitlabサーバにGitlab Runnerを登録する](https://qiita.com/tamanugi/items/170bb2bcf35a86d3111c)

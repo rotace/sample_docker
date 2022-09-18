@@ -47,7 +47,7 @@ VirtualboxのNATネットワークを使用する
 1. 表示されたrootのパスワードとbitnamiのパスワードを記録する
 1. 記録したbitnamiのパスワードでログインする
 1. 下表に示したbitnamiのパスワードに変更する
-1. ホストOSのブラウザから「https://localhost:14443」にアクセスする
+1. ホストOSのブラウザから「 https://localhost:14443 」にアクセスする
 1. 記録したrootのパスワードでログインする
 1. 下表に示したrootのパスワードに変更する
 1. 下表に示したguestのアカウントを作成する
@@ -61,7 +61,6 @@ VirtualboxのNATネットワークを使用する
 
 ## Gitlab Server / IP Setting
 
-1. ホストOSのコマンドプロンプトからbitnamiでログインする
 1. [Configure a static IP address](https://docs.bitnami.com/virtual-machine/faq/configuration/configure-static-address/)を参考に、以下のコマンドでIPアドレスを設定する。
 1. 再起動する
 
@@ -90,7 +89,6 @@ Gateway=10.0.1.1
 
 ## Gitlab Server / SSH Setting
 
-1. ゲストOSのコンソールからbitnamiでログインする
 1. [Bitnami:Activate The SSH Server](https://docs.bitnami.com/virtual-machine/faq/get-started/enable-ssh/)を参考に、以下のコマンドでSSHを有効にする
 1. ホストOSのコマンドプロンプトから、`ssh -p 11022 bitnami@localhost`でSSHログインする
 
@@ -230,7 +228,7 @@ sudo openssl req -new -key server.key -out cert.csr
   Email Address: Enter
   A challenge passward: Enter
   Optional Company Name: Enter
-sudo openssl x509 -in  cert.csr -out  server.crt -req -signkey server.key -days 3650
+sudo openssl x509 -in  cert.csr -out  server.crt -req -signkey server.key -days 3650 -extfile openssl.cnf
 ```
 
 Gitlabを再起動する。
@@ -291,25 +289,21 @@ sudo docker container run -it --rm ubuntu:latest bash
 
 ## Docker Server / Gitlab Runner Setup
 
-https://localhost:11443にアクセスし、guestでログインする。
+https://localhost:11443 にアクセスし、guestでログインする。
 適当なグループ／プロジェクトを作成し、「設定」―「CI/CD」―「Runner」からトークンを控えておく。
 
 ### Gitlab-Runner (On Server)
 
-gitlab-runnerのリポジトリを登録し、インストールする。
+gitlab-runnerのリポジトリを登録し、インストールしたのち、gitlab-runnerに証明書を配置する。
 
 ``` bash
 # gitlab-runnerのレジストリ登録
 curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
 # gitlab-runnerのインストール
 sudo apt instsall gitlab-runner
-```
-
-gitlab-runnerに証明書を配置する。
-
-``` bash
-cd ~/sample_docker/gitlab/docker-server
-make openssl-register
+# 証明書の配置
+sudo mkdir -p /etc/gitlab-runner/certs
+sudo cp gitlab.crt /etc/gitlab-runner/certs/gitlab-server.com.crt
 ```
 
 控えたトークンを用いて、以下のコマンドでgitlab-runnerにgitlabを登録する。オプションは```gitlab-runner register --help```で確認できる。
@@ -331,25 +325,37 @@ sudo gitlab-runner register
 environment = ["GIT_SSL_NO_VERIFY=true"]
 ```
 
-### Gitlab-Runner (On Docker)
-
-gitlab-runnerのイメージをダウンロードし、起動する。
-
-``` bash
-sudo docker run -d --name runner2 --restart always -v /var/run/docker.sock:/var/run/docker.sock -v config:/etc/gitlab-runner gitlab/gitlab-runner:latest
-```
-
-gitlab-runnerに証明書を配置する。
+その他のGitlab-Runnerの操作はMakefileを参照。
 
 ``` bash
 cd ~/sample_docker/gitlab/docker-server
-make openssl-register
+# セットアップ（レジストリ登録／インストール／証明書配置）
+make runner-setup
+# Runner登録
+make runner-register
+# Runner削除
+make runner-unregister
+# Runner一覧
+make runner-list
+# Runner設定
+make runner-config
+```
+
+### Gitlab-Runner (On Docker)
+
+gitlab-runnerのイメージをダウンロードし、起動したのち、gitlab-runnerに証明書を配置する。
+
+``` bash
+# gitlab-runnerのイメージをダウンロードし起動
+sudo docker run -d --name runner --restart always -v /var/run/docker.sock:/var/run/docker.sock -v runner_conf:/etc/gitlab-runner gitlab/gitlab-runner:latest
+# 証明書の配置
+sudo cp gitlab.crt /var/lib/docker/volumes/runner_conf/_data/certs/gitlab-server.com.crt
 ```
 
 控えたトークンを用いて、以下のコマンドでgitlab-runnerにgitlabを登録する。オプションは```gitlab-runner register --help```で確認できる。
 
 ``` bash
-sudo docker exec -it runner2 gitlab-runner register
+sudo docker exec -it runner gitlab-runner register
   URL:https://gitlab-server.com/ Enter
   token:xxxxxxxxxxxxxxxx Enter
   description:runner2 Enter
@@ -358,13 +364,28 @@ sudo docker exec -it runner2 gitlab-runner register
   default docker image: alpine
 ```
 
-```sudo nano /etc/gitlab-runner/config.toml```を実行し設定を修正する。
+```sudo nano /var/lib/docker/volumes/runner_conf/_data/config.toml```を実行し設定を修正する。
 
 ``` txt
 [[runners]]
 environment = ["GIT_SSL_NO_VERIFY=true"]
 ```
 
+その他のGitlab-Runnerの操作はMakefileを参照。
+
+``` bash
+cd ~/sample_docker/gitlab/docker-server
+# セットアップ（ダウンロード／起動／証明書配置）
+make runner-docker-setup
+# Runner登録
+make runner-docker-register
+# Runner削除
+make runner-docker-unregister
+# Runner一覧
+make runner-docker-list
+# Runner設定
+make runner-docker-config
+```
 
 
 

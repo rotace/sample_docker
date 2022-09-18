@@ -1,1 +1,1 @@
-subjectAltName = DNS:gitlab-server.local, IP:10.0.11.11
+subjectAltName = DNS:gitlab-server.com, IP:10.0.11.11

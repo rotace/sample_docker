@@ -16,8 +16,8 @@ VirtualboxのNATネットワークを使用する
 | router | 10.0.11.1 | - | Virtualboxのデフォルト |
 | host | 10.0.11.2 | - | Virtualboxのデフォルト | 
 | dhcp | 10.0.11.3 | - | Virtualboxのデフォルト | 
-| gitlab-server | 10.0.11.11 | gitlab-server.local |  |
-| docker-server | 10.0.11.12 | docker-server.local |  |
+| gitlab-server | 10.0.11.11 | gitlab-server.com |  |
+| docker-server | 10.0.11.12 | docker-server.com |  |
 
 ## Port-Forwarding
 
@@ -135,7 +135,7 @@ cd sample_docker/gitlab/gitlab-server
 | Network IPv4 configuration : Subnet | 10.0.11.0/24 |
 | Network IPv4 configuration : Address | 10.0.11.12 |
 | Network IPv4 configuration : Gateway | 10.0.11.1 |
-| Network IPv4 configuration : Name servers | 10.0.11.1 |
+| Network IPv4 configuration : Name servers | 10.0.11.11, 10.0.11.1 |
 | Network IPv4 configuration : Search domains | |
 | Your name | guest |
 | Your server's name | docker-server |
@@ -180,40 +180,35 @@ dig @10.0.11.11 www.google.com
 
 ``` bash
 # gitlab-server側
-10.0.11.11 gitlab-server.local
-10.0.11.12 docker-server.local
+10.0.11.11 gitlab-server.com
+10.0.11.12 docker-server.com
 # docker-server側
 # 無し
 ```
 
-```sudo nano /etc/resolv.conf```を実行しDNSサーバを記載する。
+各サービスを再起動する。
 
 ``` bash
 # gitlab-server側
-# 無し
-# docker-server側
-nameserver 10.0.11.11
-```
-
-DNSサーバを再起動する。
-
-``` bash
 sudo systemctl restart dnsmasq
+# docker-server側
+sudo systemctl restart systemd-resolved
+sudo reboot now
 ```
 
 以下のコマンドで確認する。
 
 ``` bash
 # gitlab-server側
-dig @localhost gitlab-server.local
-dig @localhost docker-server.local
-ping gitlab-server.local
-ping docker-server.local
+dig @localhost gitlab-server.com
+dig @localhost docker-server.com
+ping gitlab-server.com
+ping docker-server.com
 # docker-server側
-dig @10.0.11.11 gitlab-server.local
-dig @10.0.11.11 docker-server.local
-ping gitlab-server.local
-ping docker-server.local
+dig @10.0.11.11 gitlab-server.com
+dig @10.0.11.11 docker-server.com
+ping gitlab-server.com
+ping docker-server.com
 ```
 
 ## Gitlab Server / OpenSSL Setup
@@ -231,11 +226,16 @@ sudo openssl req -new -key server.key -out cert.csr
   Locality Name: Enter
   Organization Name: Enter
   Organization Unit Name: Enter
-  Common Name: gitlab-server.local Enter
+  Common Name: Enter
   Email Address: Enter
   A challenge passward: Enter
   Optional Company Name: Enter
 sudo openssl x509 -in  cert.csr -out  server.crt -req -signkey server.key -days 3650
+```
+
+Gitlabを再起動する。
+
+``` bash
 sudo gitlab-ctl restart
 ```
 
@@ -265,23 +265,44 @@ dockerをインストールする。
 sudo apt install docker.io docker-compose
 ```
 
-## Docker Server / Gitlab Runner Setup
-
-gitlab-runnerのリポジトリを登録し、インストールする。
-
-``` bash
-# gitlab-runnerのレジストリ登録
-make register-gitlab-runner-repository
-# gitlab-runnerのインストール
-sudo apt instsall gitlab-runner
-```
-
 ```sudo nano /etc/docker/daemon.json```を実行しDNSアドレスを記載する。
 
 ``` json
 {
     "dns":["10.0.11.11"]
 }
+```
+
+Dockerデーモンを再起動する。
+
+```
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+
+以下のコマンドで確認する。
+
+```
+sudo docker container run -it --rm ubuntu:latest bash
+  apt update
+  apt install dnsutils
+  dig gitlab-server.com
+```
+
+## Docker Server / Gitlab Runner Setup
+
+https://localhost:11443にアクセスし、guestでログインする。
+適当なグループ／プロジェクトを作成し、「設定」―「CI/CD」―「Runner」からトークンを控えておく。
+
+### Gitlab-Runner (On Server)
+
+gitlab-runnerのリポジトリを登録し、インストールする。
+
+``` bash
+# gitlab-runnerのレジストリ登録
+curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+# gitlab-runnerのインストール
+sudo apt instsall gitlab-runner
 ```
 
 gitlab-runnerに証明書を配置する。
@@ -291,16 +312,16 @@ cd ~/sample_docker/gitlab/docker-server
 make openssl-register
 ```
 
-https://localhost:11443にアクセスし、guestでログインする。
-適当なグループ／プロジェクトを作成し、「設定」―「CI/CD」―「Runner」からトークンを控える。
-以下のコマンドでgitlab-runnerにgitlabを登録する。
+控えたトークンを用いて、以下のコマンドでgitlab-runnerにgitlabを登録する。オプションは```gitlab-runner register --help```で確認できる。
 
 ``` bash
 sudo gitlab-runner register
-  URL:https://10.0.11.11/ Enter
+  URL:https://gitlab-server.com/ Enter
   token:xxxxxxxxxxxxxxxx Enter
-  description:docker-server Enter
-  tag: Enter
+  description:runner1 Enter
+  tag: direct
+  executer: docker
+  default docker image: alpine
 ```
 
 ```sudo nano /etc/gitlab-runner/config.toml```を実行し設定を修正する。
@@ -309,6 +330,43 @@ sudo gitlab-runner register
 [[runners]]
 environment = ["GIT_SSL_NO_VERIFY=true"]
 ```
+
+### Gitlab-Runner (On Docker)
+
+gitlab-runnerのイメージをダウンロードし、起動する。
+
+``` bash
+sudo docker run -d --name runner2 --restart always -v /var/run/docker.sock:/var/run/docker.sock -v config:/etc/gitlab-runner gitlab/gitlab-runner:latest
+```
+
+gitlab-runnerに証明書を配置する。
+
+``` bash
+cd ~/sample_docker/gitlab/docker-server
+make openssl-register
+```
+
+控えたトークンを用いて、以下のコマンドでgitlab-runnerにgitlabを登録する。オプションは```gitlab-runner register --help```で確認できる。
+
+``` bash
+sudo docker exec -it runner2 gitlab-runner register
+  URL:https://gitlab-server.com/ Enter
+  token:xxxxxxxxxxxxxxxx Enter
+  description:runner2 Enter
+  tag: via-docker
+  executer: docker
+  default docker image: alpine
+```
+
+```sudo nano /etc/gitlab-runner/config.toml```を実行し設定を修正する。
+
+``` txt
+[[runners]]
+environment = ["GIT_SSL_NO_VERIFY=true"]
+```
+
+
+
 
 # Reference
 

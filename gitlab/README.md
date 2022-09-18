@@ -135,7 +135,7 @@ cd sample_docker/gitlab/gitlab-server
 | Network IPv4 configuration : Subnet | 10.0.11.0/24 |
 | Network IPv4 configuration : Address | 10.0.11.12 |
 | Network IPv4 configuration : Gateway | 10.0.11.1 |
-| Network IPv4 configuration : Name servers | 10.0.11.11, 10.0.11.1 |
+| Network IPv4 configuration : Name servers | 10.0.11.1 |
 | Network IPv4 configuration : Search domains | |
 | Your name | guest |
 | Your server's name | docker-server |
@@ -179,8 +179,20 @@ dig @10.0.11.11 www.google.com
 ```sudo nano /etc/hosts```を実行し解決アドレスを記載する。
 
 ``` bash
+# gitlab-server側
 10.0.11.11 gitlab-server.local
 10.0.11.12 docker-server.local
+# docker-server側
+# 無し
+```
+
+```sudo nano /etc/resolv.conf```を実行しDNSサーバを記載する。
+
+``` bash
+# gitlab-server側
+# 無し
+# docker-server側
+nameserver 10.0.11.11
 ```
 
 DNSサーバを再起動する。
@@ -195,9 +207,13 @@ sudo systemctl restart dnsmasq
 # gitlab-server側
 dig @localhost gitlab-server.local
 dig @localhost docker-server.local
+ping gitlab-server.local
+ping docker-server.local
 # docker-server側
 dig @10.0.11.11 gitlab-server.local
 dig @10.0.11.11 docker-server.local
+ping gitlab-server.local
+ping docker-server.local
 ```
 
 ## Gitlab Server / OpenSSL Setup
@@ -210,15 +226,15 @@ sudo mv server.crt server.crt.back
 sudo mv server.key server.key.back
 sudo openssl genrsa -out server.key 2048
 sudo openssl req -new -key server.key -out cert.csr
-  Country Name: JP
-  State Name: Tokyo
-  Locality Name: Chiyoda
-  Organization Name: Sample Gitlab
-  Organization Unit Name:
-  Common Name: gitlab-server.local
-  Email Address: gitlab-server.local
-  A challenge passward:
-  Optional Company Name:
+  Country Name: JP Enter
+  State Name: Enter
+  Locality Name: Enter
+  Organization Name: Enter
+  Organization Unit Name: Enter
+  Common Name: gitlab-server.local Enter
+  Email Address: Enter
+  A challenge passward: Enter
+  Optional Company Name: Enter
 sudo openssl x509 -in  cert.csr -out  server.crt -req -signkey server.key -days 3650
 sudo gitlab-ctl restart
 ```
@@ -241,13 +257,22 @@ openssl-checkの判定方法を以下に示す。
 | Verify return code: 9 (certificate is not yet valid) | NG |
 | その他 | 要調査 |
 
+## Docker Server / Docker Setup
+
+dockerをインストールする。
+
+``` bash
+sudo apt install docker.io docker-compose
+```
 
 ## Docker Server / Gitlab Runner Setup
 
 gitlab-runnerのリポジトリを登録し、インストールする。
 
 ``` bash
+# gitlab-runnerのレジストリ登録
 make register-gitlab-runner-repository
+# gitlab-runnerのインストール
 sudo apt instsall gitlab-runner
 ```
 
@@ -266,8 +291,24 @@ cd ~/sample_docker/gitlab/docker-server
 make openssl-register
 ```
 
+https://localhost:11443にアクセスし、guestでログインする。
+適当なグループ／プロジェクトを作成し、「設定」―「CI/CD」―「Runner」からトークンを控える。
+以下のコマンドでgitlab-runnerにgitlabを登録する。
 
+``` bash
+sudo gitlab-runner register
+  URL:https://10.0.11.11/ Enter
+  token:xxxxxxxxxxxxxxxx Enter
+  description:docker-server Enter
+  tag: Enter
+```
 
+```sudo nano /etc/gitlab-runner/config.toml```を実行し設定を修正する。
+
+``` txt
+[[runners]]
+environment = ["GIT_SSL_NO_VERIFY=true"]
+```
 
 # Reference
 

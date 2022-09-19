@@ -422,7 +422,18 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
 
 ## How To Configure gitlab-ci.yaml
 
+* [Gitlab](https://gitlab.com/users/sign_in)の最新版のgitlab-ci.yamlフォーマットチェックを利用する。
 
+### Unittest
+* [Unit Test Reports Examples](https://docs.gitlab.com/ee/ci/testing/unit_test_report_examples.html)に様々な言語のgitlab-ci.yamlの設定例がある。
+* gitlab-ci.yamlに```junit: report.xml```のように単体テストのレポートファイルを指定することで、単体テスト結果をキャプチャできる。
+
+
+### Coverage
+* [Test Corvarage Visualization](https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html)に様々な言語のgitlab-ci.yamlの設定例がある。
+* gitlab-ci.yamlに```coverage: '/^TOTAL*\s+(\d+\%)$/'```のような正規表現を設定することで、実行結果中からカバレッジの数値をキャプチャできる。
+* 実行結果中のカバレッジ結果を元に、[Rubular](https://rubular.com/)を利用してカバレッジ取得用の正規表現を作成する。
+* 作成した正規表現をgitlab-ci.yamlに設定する。
 
 ## Reference
 

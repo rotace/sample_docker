@@ -40,3 +40,20 @@ com.up: com.build
 com.down:
 	sudo docker-compose down
 
+# Web
+web.setup:
+	sudo docker run -d --name web --restart always -p 80:80 -v web_data:/usr/local/apache2/htdocs httpd
+
+web.clean:
+	sudo docker stop web
+	sudo docker rm web
+
+# Doxygen
+doc.exec:
+	sudo docker run --rm -v "${PWD}":/data -it hrektts/doxygen doxygen Doxyfile
+
+doc.deploy:
+	sudo docker run --rm -v "${PWD}":/data -v web_data:/usr/local/apache2/htdocs/local/sample_docker/html:/data/html -it hrektts/doxygen doxygen Doxyfile
+
+doc.clean:
+	rm -rf html/

@@ -55,11 +55,3 @@ runner.docker.delete:
 
 runner.docker.config:
 	sudo nano /var/lib/docker/volumes/runner_conf/_data/config.toml
-
-# Apache On Docker
-apache.docker.setup:
-	sudo docker run -d --name web --restart always -p 80:80 -v web_data:/usr/local/apache2/htdocs httpd
-
-apache.docker.clean:
-	sudo docker stop web
-	sudo docker rm web

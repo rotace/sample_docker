@@ -306,7 +306,7 @@ sudo docker container run -it --rm ubuntu:latest bash
 ## Docker Server / Gitlab Runner Setup
 
 https://localhost:11443 にアクセスし、guestでログインする。
-適当なグループ／プロジェクトを作成し、「設定」―「CI/CD」―「Runner」からトークンを控えておく。
+適当なグループ／プロジェクトを作成し、「Settings」―「CI/CD」―「Runner」からトークンを控えておく。
 
 ### Gitlab-Runner (On Server)
 
@@ -343,7 +343,7 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
   volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
 ```
 
-作成したグループ／プロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
+作成したグループ／プロジェクトの「Settings」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
 
 本項のmakeコマンドによるショートカットを以下に示す。
 
@@ -388,7 +388,7 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
   volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
 ```
 
-作成したグループ／プロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
+作成したグループ／プロジェクトの「Settings」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
 
 本項のmakeコマンドによるショートカットを以下に示す。
 
@@ -408,19 +408,14 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
 本項では本リポジトリをGitlabに登録し、pythonの単体テストジョブを実行する。
 
 1. 前項でグループを作成した場合、グループ内にプロジェクトを作成する。
-1. 作成したプロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
+1. 作成したプロジェクトの「Settings」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
 1. 秘密鍵と公開鍵のペアを作成し、Gitlabに公開鍵を登録する。
 1. 作成したプロジェクトに本リポジトリをプッシュする。
 1. 「CI/CD」―「Pipelines」でジョブが成功していることを確認する。
 
 ## Doxygen Tutorial
 
-docker-server側でWEBサーバを新規作成する。
-
-``` bash
-sudo docker run -d --name web --restart always -p 80:80 -v web_data:/usr/local/apache2/htdocs httpd
-```
-
+1. docker-serverで```cd ~/sample_docker; make web.setup```を実行し、WEBサーバを作成する
 1. 「CI/CD」―「Pipelines」から「web-develop」、「web-main」ジョブを手動実行する
 1. 「Operation」―「Environments」から「web-develop」、「web-main」のWEBリンクにジャンプする
 1. Doxygenによって作成されたHTMLページが表示されることを確認する

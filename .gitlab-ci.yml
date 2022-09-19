@@ -8,7 +8,20 @@ stages:
   - doc
   - web
 
-pytest:
+cpp:
+  stage: test
+  image: alpine:latest
+  script:
+    - apk update
+    - apk add --no-cache gcc g++ libc-dev cpputest cpputest-static
+    - cd cpp
+    - g++ -o hoge hoge.cpp -lCppUTest
+    - ./hoge -ojunit
+  artifacts:
+    reports:
+      junit: cpp/cpputest_*.xml
+
+python:
   stage: test
   image: python:3-alpine
   script:

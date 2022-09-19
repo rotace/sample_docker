@@ -1,5 +1,9 @@
 ## User Settings
 
+# Executable
+hoge
+fuga
+
 # Test
 *.xml
 *.coverage

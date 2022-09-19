@@ -342,6 +342,7 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
   [runner.docker]
   image = "docker:stable"
   privileged = true
+  volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
 ```
 
 作成したグループ／プロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
@@ -388,6 +389,7 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
   [runner.docker]
   image = "docker:stable"
   privileged = true
+  volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
 ```
 
 作成したグループ／プロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。

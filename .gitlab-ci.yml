@@ -33,8 +33,8 @@ web-develop:
     - docker exec web rm -rf /usr/local/apache2/htdocs/guest-group/sample_docker/develop
     - docker exec web mkdir -p /usr/local/apache2/htdocs/guest-group/sample_docker/develop
     - docker cp html web:/usr/local/apache2/htdocs/guest-group/sample_docker/develop
-  except:
-    - main
+  # except:
+  #   - main
   when: manual
   environment:
     name: document-develop
@@ -42,6 +42,7 @@ web-develop:
 
 web-main:
   stage: web
+  image: docker
   script:
     - docker exec web rm -rf /usr/local/apache2/htdocs/guest-group/sample_docker/main
     - docker exec web mkdir -p /usr/local/apache2/htdocs/guest-group/sample_docker/main

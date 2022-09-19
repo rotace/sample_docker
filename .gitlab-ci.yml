@@ -1,0 +1,12 @@
+
+
+stages:
+  - test
+
+pytest:
+  stage: test
+  image: python:3-alpine
+  before_script:
+    - pip install pytest pytest-cov
+  script:
+    - pytest --cov=.

@@ -49,11 +49,14 @@ web.clean:
 	sudo docker rm web
 
 # Doxygen
-doc.exec:
+doc.create:
 	sudo docker run --rm -v "${PWD}":/data -it hrektts/doxygen doxygen Doxyfile
 
 doc.deploy:
-	sudo docker run --rm -v "${PWD}":/data -v web_data:/usr/local/apache2/htdocs/local/sample_docker/html:/data/html -it hrektts/doxygen doxygen Doxyfile
+	sudo docker exec web rm -rf /usr/local/apache2/htdocs/local/sample_docker
+	sudo docker exec web mkdir -p /usr/local/apache2/htdocs/local/sample_docker
+	sudo docker cp html web:/usr/local/apache2/htdocs/local/sample_docker
 
 doc.clean:
-	rm -rf html/
+	sudo docker exec web rm -rf /usr/local/apache2/htdocs/local/sample_docker
+	sudo rm -rf html/ latex/

@@ -20,8 +20,8 @@ makeコマンドによるショートカットを以下に示す。
 | --- | --- |
 | make web.setup | WEBサーバを起動する |
 | make web.clean | WEBサーバをシャットダウンする |
-| make doc.exec | ドキュメントを生成する |
-| make doc.deploy | ドキュメントを生成し、WEBサーバへデプロイする |
+| make doc.create | ドキュメントを生成する |
+| make doc.deploy | WEBサーバへデプロイする |
 | make doc.clean | 生成したドキュメントを削除する |
 
 ## Reference

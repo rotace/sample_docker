@@ -34,3 +34,7 @@
 # Certification
 *.crt
 *.key
+
+# Document
+html/
+latex/

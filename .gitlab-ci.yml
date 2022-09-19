@@ -29,6 +29,7 @@ doxygen:
 
 web-develop:
   stage: web
+  image: docker
   script:
     - docker exec web rm -rf /usr/local/apache2/htdocs/guest-group/sample_docker/develop
     - docker exec web mkdir -p /usr/local/apache2/htdocs/guest-group/sample_docker/develop
@@ -42,6 +43,7 @@ web-develop:
 
 web-main:
   stage: web
+  image: docker
   script:
     - docker exec web rm -rf /usr/local/apache2/htdocs/guest-group/sample_docker/main
     - docker exec web mkdir -p /usr/local/apache2/htdocs/guest-group/sample_docker/main

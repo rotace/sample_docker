@@ -1,7 +1,12 @@
 
+cache:
+  paths:
+    - html/*
 
 stages:
   - test
+  - doc
+  - web
 
 pytest:
   stage: test
@@ -10,3 +15,41 @@ pytest:
     - pip install pytest pytest-cov
   script:
     - pytest --cov=.
+  
+doxygen:
+  stage: doc
+  image: hrektts/doxygen
+  script:
+    - echo "GENERATE_HTML=YES" >> tmpfile
+	  - echo "GENERATE_LATEX=NO" >> tmpfile
+	  - echo "GENERATE_RTF=NO" >> tmpfile
+	  - echo "GENERATE_MAN=NO" >> tmpfile
+	  - echo "GENERATE_XML=NO" >> tmpfile
+	  - echo "HTML_OUTPUT=/output/sample" >> tmpfile
+    - doxygen tmpfile
+
+web-master:
+  stage: web
+  script:
+    - docker exec web rm -rf /usr/local/apache2/htdocs/guest-group/sample_docker/develop
+    - docker exec web mkdir -p /usr/local/apache2/htdocs/guest-group/sample_docker/develop
+    - docker cp html web:/usr/local/apache2/htdocs/guest-group/sample_docker/develop
+  except:
+    - master
+  when: manual
+  environment:
+    name: document-develop
+    url: http://localhost:12080/guest-group/sample_docker/develop/
+
+web-master:
+  stage: web
+  script:
+    - docker exec web rm -rf /usr/local/apache2/htdocs/guest-group/sample_docker/master
+    - docker exec web mkdir -p /usr/local/apache2/htdocs/guest-group/sample_docker/master
+    - docker cp html web:/usr/local/apache2/htdocs/guest-group/sample_docker/master
+  only:
+    - master
+  when: manual
+  environment:
+    name: document-master
+    url: http://localhost:12080/guest-group/sample_docker/master/

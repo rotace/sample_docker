@@ -341,6 +341,8 @@ sudo gitlab-runner register
 environment = ["GIT_SSL_NO_VERIFY=true"]
 ```
 
+作成したグループ／プロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
+
 本項のmakeコマンドによるショートカットを以下に示す。
 
 | 順序 | makeコマンド | 操作内容 |
@@ -382,6 +384,8 @@ sudo docker exec -it runner gitlab-runner register
 environment = ["GIT_SSL_NO_VERIFY=true"]
 ```
 
+作成したグループ／プロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
+
 本項のmakeコマンドによるショートカットを以下に示す。
 
 | 順序 | makeコマンド | 操作内容 |
@@ -392,6 +396,26 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
 | opt | make runner.docker.unregister | Runner削除 |
 | opt | make runner.docker.delete | Runner強制削除 |
 | opt | make runner.docker.list | Runner一覧 |
+
+
+## Unit Test Tutorial
+
+本リポジトリ自体がgitlab-ciのサンプルとなっている。
+本項では本リポジトリをGitlabに登録し、pythonの単体テストジョブを実行する。
+
+1. 前項でグループを作成した場合、グループ内にプロジェクトを作成する。
+1. 作成したプロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
+1. 秘密鍵と公開鍵のペアを作成し、Gitlabに公開鍵を登録する。
+1. 作成したプロジェクトに本リポジトリをプッシュする。
+1. 「CI/CD」―「Pipelines」でジョブが成功していることを確認する。
+
+## Doxygen Tutorial
+
+docker-server側でWEBサーバを新規作成する。
+
+``` bash
+sudo docker run -d --name web --restart always -p 80:80 -v web_data:/usr/local/apache2/htdocs httpd
+```
 
 
 

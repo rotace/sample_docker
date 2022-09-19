@@ -8,7 +8,7 @@ Dockerのサンプルコマンド集
 | doxygen | ドキュメントサンプル |
 | gitlab | Gitlabとの連携環境構築サンプル |
 | offline | オフライン環境構築サンプル |
-| test | 単体テストサンプル |
+| pytest | Python単体テストサンプル |
 
 ## Reference
 

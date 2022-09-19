@@ -37,6 +37,10 @@ runner.docker.setup: gitlab.crt
 	sudo docker run -d --name runner --restart always -v /var/run/docker.sock:/var/run/docker.sock -v runner_conf:/etc/gitlab-runner gitlab/gitlab-runner:latest
 	sudo cp gitlab.crt /var/lib/docker/volumes/runner_conf/_data/certs/gitlab-server.com.crt
 
+runner.docker.clean:
+	sudo docker stop runner
+	sudo docker rm runner
+
 runner.docker.register:
 	sudo docker exec -it runner gitlab-runner register
 
@@ -51,3 +55,11 @@ runner.docker.delete:
 
 runner.docker.config:
 	sudo nano /var/lib/docker/volumes/runner_conf/_data/config.toml
+
+# Apache On Docker
+apache.docker.setup:
+	sudo docker run -d --name web --restart always -p 80:80 -v web_data:/usr/local/apache2/htdocs httpd
+
+apache.docker.clean:
+	sudo docker stop web
+	sudo docker rm web

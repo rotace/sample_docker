@@ -440,6 +440,15 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
   * [Gitlab Runner](https://docs.gitlab.com/runner/)
     * [Run Gitlab Runner in a container](https://docs.gitlab.com/runner/install/docker.html)
     * [Registering runners](https://docs.gitlab.com/runner/register/index.html)
+  * [Gitlab CI/CD](https://docs.gitlab.com/ee/ci/)
+    * [Get Started](https://docs.gitlab.com/ee/ci/quick_start/)
+    * [Testing](https://docs.gitlab.com/ee/ci/testing/)
+    * [Test Corvarage Visualization](https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html)
+    * [Unit Test Reports](https://docs.gitlab.com/ee/ci/testing/unit_test_reports.html)
+    * [Unit Test Reports Examples](https://docs.gitlab.com/ee/ci/testing/unit_test_report_examples.html)
+* [Gitlab日本語ドキュメント](https://gitlab-docs.creationline.com/ee/README.html)
+  * [Gitlab CI/CD](https://gitlab-docs.creationline.com/ee/ci/README.html)
+    * [Gitlab CI/CD パイプライン設定リファレンス](https://gitlab-docs.creationline.com/ee/ci/yaml/README.html)
 
 ### Tips
 * [備忘録：Gitlab Runnerの登録手順](https://qiita.com/hisato_imanishi/items/28bbe6f05f8e62d1ef62)

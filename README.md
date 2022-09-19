@@ -7,7 +7,7 @@ Dockerのサンプルコマンド集
 | 3step_tutorial | 3ステップのチュートリアル |
 | gitlab | Gitlabとの連携環境構築サンプル |
 | offline | オフライン環境構築サンプル |
-| pytest | Python単体テストサンプル |
+| python | Python単体テストサンプル |
 | .gitlab-ci.yml | 「Gitlabとの連携環境構築サンプル」で使用するGitlab CI/CDの設定ファイル |
 | Doxyfile | Doxygenの設定ファイル |
 | Makefile | Dockerの基本コマンドを集めたコマンド集 |

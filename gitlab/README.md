@@ -339,6 +339,9 @@ sudo gitlab-runner register
 ``` txt
 [[runners]]
 environment = ["GIT_SSL_NO_VERIFY=true"]
+  [runner.docker]
+  image = "docker:stable"
+  privileged = true
 ```
 
 作成したグループ／プロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。
@@ -382,6 +385,9 @@ sudo docker exec -it runner gitlab-runner register
 ``` txt
 [[runners]]
 environment = ["GIT_SSL_NO_VERIFY=true"]
+  [runner.docker]
+  image = "docker:stable"
+  privileged = true
 ```
 
 作成したグループ／プロジェクトの「設定」―「CI/CD」―「Runner」に新たなRunnerが登録されていることを確認する。

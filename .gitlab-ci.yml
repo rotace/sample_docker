@@ -21,11 +21,11 @@ doxygen:
   image: hrektts/doxygen
   script:
     - echo "GENERATE_HTML=YES" >> tmpfile
-	  - echo "GENERATE_LATEX=NO" >> tmpfile
-	  - echo "GENERATE_RTF=NO" >> tmpfile
-	  - echo "GENERATE_MAN=NO" >> tmpfile
-	  - echo "GENERATE_XML=NO" >> tmpfile
-	  - echo "HTML_OUTPUT=/output/sample" >> tmpfile
+    - echo "GENERATE_LATEX=NO" >> tmpfile
+    - echo "GENERATE_RTF=NO" >> tmpfile
+    - echo "GENERATE_MAN=NO" >> tmpfile
+    - echo "GENERATE_XML=NO" >> tmpfile
+    - echo "HTML_OUTPUT=/output/sample" >> tmpfile
     - doxygen tmpfile
 
 web-develop:

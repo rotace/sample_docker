@@ -4,50 +4,50 @@ GITLAB_HOST=10.0.11.11
 DOCKER_HOST=10.0.11.12
 
 # OpenSSL
-openssl-check:
+openssl.check:
 	openssl s_client -connect ${GITLAB_HOST}:443 -showcerts < /dev/null
 
 gitlab.crt:
 	openssl s_client -connect ${GITLAB_HOST}:443 -showcerts < /dev/null | openssl x509 -outform PEM > gitlab.crt
 
 # Gitlab Runner
-runner-setup: gitlab.crt
+runner.setup: gitlab.crt
 	curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
 	sudo apt install gitlab-runner
 	sudo mkdir -p /etc/gitlab-runner/certs
 	sudo cp gitlab.crt /etc/gitlab-runner/certs/gitlab-server.com.crt
 
-runner-register:
+runner.register:
 	sudo gitlab-runner register
 
-runner-unregister:
+runner.unregister:
 	sudo gitlab-runner unregister
 
-runner-list:
+runner.list:
 	sudo gitlab-runner list
 
-runner-delete:
+runner.delete:
 	sudo gitlab-runner verify --delete
 
-runner-config:
+runner.config:
 	sudo nano /etc/gitlab-runner/config.toml
 
 # Gitlab Runner On Docker
-runner-docker-setup: gitlab.crt
+runner.docker.setup: gitlab.crt
 	sudo docker run -d --name runner --restart always -v /var/run/docker.sock:/var/run/docker.sock -v runner_conf:/etc/gitlab-runner gitlab/gitlab-runner:latest
 	sudo cp gitlab.crt /var/lib/docker/volumes/runner_conf/_data/certs/gitlab-server.com.crt
 
-runner-docker-register:
+runner.docker.register:
 	sudo docker exec -it runner gitlab-runner register
 
-runner-docker-unregister:
+runner.docker.unregister:
 	sudo docker exec -it runner gitlab-runner unregister
 
-runner-docker-list:
+runner.docker.list:
 	sudo docker exec -it runner gitlab-runner list
 
-runner-docker-delete:
+runner.docker.delete:
 	sudo docker exec -it runner gitlab-runner verify --delete
 
-runner-docker-config:
+runner.docker.config:
 	sudo nano /var/lib/docker/volumes/runner_conf/_data/config.toml

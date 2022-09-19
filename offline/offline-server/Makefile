@@ -1,6 +1,6 @@
 include ../../Makefile
 
-REGISTRY_NAME=registry1
+REGISTRY_NAME=registry
 REGISTRY_HOST=localhost
 REGISTRY_PORT=5000
 

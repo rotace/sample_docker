@@ -254,7 +254,7 @@ docker-server側で以下のコマンドで確認する。
 openssl s_client -connect 10.0.11.11:443 -showcerts < /dev/null
 ```
 
-openssl-checkの判定方法を以下に示す。
+openssl.checkの判定方法を以下に示す。
 | 結果 | 判定 |
 | --- | --- |
 | Verify return code: 18 (self signed certificate) | OK |
@@ -265,11 +265,11 @@ openssl-checkの判定方法を以下に示す。
 
 | 順序 | makeコマンド | 操作内容 |
 | --- | --- | --- |
-| 1 | make openssl-backup | バックアップ |
-| 2 | make openssl-genkey | .keyファイル作成 |
-| 3 | make openssl-gencsr | .csrファイル作成 |
-| 4 | make openssl-gencrt | .crtファイル作成 |
-| 5 | make openssl-check | 証明書の確認 |
+| 1 | make openssl.backup | バックアップ |
+| 2 | make openssl.genkey | .keyファイル作成 |
+| 3 | make openssl.gencsr | .csrファイル作成 |
+| 4 | make openssl.gencrt | .crtファイル作成 |
+| 5 | make openssl.check | 証明書の確認 |
 
 ## Docker Server / Docker Setup
 
@@ -345,12 +345,12 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
 
 | 順序 | makeコマンド | 操作内容 |
 | --- | --- | --- |
-| 1 | make runner-setup | セットアップ（レジストリ登録／インストール／証明書配置） |
-| 2 | make runner-register | Runner登録 |
-| 3 | make runner-config | Runner設定編集 |
-| opt | make runner-unregister | Runner削除 |
-| opt | make runner-delete | Runner強制削除 |
-| opt | make runner-list | Runner一覧 |
+| 1 | make runner.setup | セットアップ（レジストリ登録／インストール／証明書配置） |
+| 2 | make runner.register | Runner登録 |
+| 3 | make runner.config | Runner設定編集 |
+| opt | make runner.unregister | Runner削除 |
+| opt | make runner.delete | Runner強制削除 |
+| opt | make runner.list | Runner一覧 |
 
 ### Gitlab-Runner (On Docker)
 
@@ -386,12 +386,12 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
 
 | 順序 | makeコマンド | 操作内容 |
 | --- | --- | --- |
-| 1 | make runner-docker-setup | セットアップ（ダウンロード／起動／証明書配置） |
-| 2 | make runner-docker-register | Runner登録 |
-| 3 | make runner-docker-config | Runner設定編集 |
-| opt | make runner-docker-unregister | Runner削除 |
-| opt | make runner-docker-delete | Runner強制削除 |
-| opt | make runner-docker-list | Runner一覧 |
+| 1 | make runner.docker.setup | セットアップ（ダウンロード／起動／証明書配置） |
+| 2 | make runner.docker.register | Runner登録 |
+| 3 | make runner.docker.config | Runner設定編集 |
+| opt | make runner.docker.unregister | Runner削除 |
+| opt | make runner.docker.delete | Runner強制削除 |
+| opt | make runner.docker.list | Runner一覧 |
 
 
 
@@ -419,5 +419,5 @@ environment = ["GIT_SSL_NO_VERIFY=true"]
 * [Dockerコンテナ上にGitlab Runnerを構築してGitlabに登録する](https://satolabo.net/2020/04/22/regist-docker-gitlab-runner/)
 * [オレオレ証明書なGitlabサーバにGitlab Runnerを登録する](https://qiita.com/tamanugi/items/170bb2bcf35a86d3111c)
 * [Gitlab-CI Runner: 自己署名証明書を無視する](https://www.web-dev-qa-db-ja.com/ja/go/gitlabci%E3%83%A9%E3%83%B3%E3%83%8A%E3%83%BC%EF%BC%9A%E8%87%AA%E5%B7%B1%E7%BD%B2%E5%90%8D%E8%A8%BC%E6%98%8E%E6%9B%B8%E3%82%92%E7%84%A1%E8%A6%96%E3%81%99%E3%82%8B/831725762/)
-* [HTTP化したGitlab Runnerが「SSL certificate problem...」になる](https://satolabo.net/2020/06/07/gitlab-runner-ssl-certificate-problem/)
+* [HTTP化したGitlab Runnerが「SSL certificate problem...」になる](https://satolabo.net/2020/06/07/gitlab-runner.ssl-certificate-problem/)
 * [Bitnami：Enable HTTPS Support With NGINX](https://docs.bitnami.com/bch/manage-servers-from-aws-console/)

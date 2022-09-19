@@ -1,5 +1,5 @@
 
-echo:
+hello:
 	echo "Hello Docker Sample!"
 
 # docker command

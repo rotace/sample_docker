@@ -340,8 +340,6 @@ sudo gitlab-runner register
 [[runners]]
 environment = ["GIT_SSL_NO_VERIFY=true"]
   [runner.docker]
-  image = "docker:stable"
-  privileged = true
   volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
 ```
 
@@ -387,8 +385,6 @@ sudo docker exec -it runner gitlab-runner register
 [[runners]]
 environment = ["GIT_SSL_NO_VERIFY=true"]
   [runner.docker]
-  image = "docker:stable"
-  privileged = true
   volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
 ```
 
@@ -424,6 +420,10 @@ docker-server側でWEBサーバを新規作成する。
 ``` bash
 sudo docker run -d --name web --restart always -p 80:80 -v web_data:/usr/local/apache2/htdocs httpd
 ```
+
+1. 「CI/CD」―「Pipelines」から「web-develop」、「web-main」ジョブを手動実行する
+1. 「Operation」―「Environments」から「web-develop」、「web-main」のWEBリンクにジャンプする
+1. Doxygenによって作成されたHTMLページが表示されることを確認する
 
 
 

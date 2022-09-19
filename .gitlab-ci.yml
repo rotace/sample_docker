@@ -29,6 +29,7 @@ doxygen:
 
 web-develop:
   stage: web
+  image: docker
   script:
     - docker exec web rm -rf /usr/local/apache2/htdocs/guest-group/sample_docker/develop
     - docker exec web mkdir -p /usr/local/apache2/htdocs/guest-group/sample_docker/develop
@@ -38,7 +39,7 @@ web-develop:
   when: manual
   environment:
     name: document-develop
-    url: http://localhost:12080/guest-group/sample_docker/develop/
+    url: http://localhost:12080/guest-group/sample_docker/develop/html
 
 web-main:
   stage: web
@@ -52,4 +53,4 @@ web-main:
   when: manual
   environment:
     name: document-main
-    url: http://localhost:12080/guest-group/sample_docker/main/
+    url: http://localhost:12080/guest-group/sample_docker/main/html

@@ -1,0 +1,6 @@
+version: '3'
+services: 
+  compiler:
+    build: .
+    image: python
+    container_name: python1

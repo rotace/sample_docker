@@ -1,0 +1,6 @@
+version: '3'
+services: 
+  compiler:
+    build: .
+    image: cpp
+    container_name: cpp1

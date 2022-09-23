@@ -1,16 +1,36 @@
 # sample_docker
 Dockerのサンプルコマンド集
 
+各フォルダは、分類ごとにノウハウをまとめた構成となっている。
 
-| フォルダ名／ファイル名 | 内容 |
+| フォルダ名 | 分類 | 内容 |
+| --- | --- | --- |
+| 3step_tutorial | チュートリアル | 3ステップのチュートリアル |
+| wsl | ビルド・デバッグ | WSLによる開発環境構築 |
+| cpp | 単体テスト | C++のソースコードサンプル |
+| python | 単体テスト | Pythonのソースコードサンプル |
+| compose | 環境管理・共有 | docker-compose.ymlやDockerfileによる環境管理 |
+| gitlab | リビジョン管理 | Gitlabとの連携環境構築 |
+| offline | オフライン環境 | Dockerのオフライン環境構築 |
+
+リポジトリ直下のファイル群は、本リポジトリ自体をサンプルとして使用する際に必要な設定ファイルが主である。
+
+| ファイル名 | 内容 |
 | --- | --- |
-| 3step_tutorial | 3ステップのチュートリアル |
-| gitlab | Gitlabとの連携環境構築サンプル |
-| offline | オフライン環境構築サンプル |
-| python | Python単体テストサンプル |
-| .gitlab-ci.yml | 「Gitlabとの連携環境構築サンプル」で使用するGitlab CI/CDの設定ファイル |
-| Doxyfile | Doxygenの設定ファイル |
+| README.md | 本ファイル |
 | Makefile | Dockerの基本コマンドを集めたコマンド集 |
+| Doxyfile | Makefileの「doc.create」コマンドで使用するDoxygenの設定ファイルサンプル |
+| .gitlab-ci.yml | 「gitlab」フォルダで使用するGitlab CI/CDの設定ファイルサンプル |
+
+makeコマンドによるショートカットを以下に示す。
+
+| makeコマンド | 操作内容 |
+| --- | --- |
+| make web.setup | WEBサーバを起動する |
+| make web.clean | WEBサーバをシャットダウンする |
+| make doc.create | ドキュメントを生成する |
+| make doc.deploy | WEBサーバへデプロイする |
+| make doc.clean | 生成したドキュメントを削除する |
 
 ## 基本コマンド
 
@@ -85,9 +105,12 @@ Dockerを使ったC言語の開発例を以下に示す。
 # カレントディレクトリをバインドしてコンテナ起動
 sudo docker run --rm -it -w /work -v "${PWD}":/work alpine:latest ash
 # 必要なパッケージをインストール
-(/work) apk add --no-cache gcc libc-dev
-# 実行
-(/work) gcc --version
+(/work) apk update
+(/work) apk add --no-cache gcc g++ libc-dev cpputest cpputest-static
+# 単体テスト実行
+(/work) cd cpp
+(/work) g++ -o hoge hoge.cpp -lCppUTest
+(/work) ./hoge
 # ログアウト
 (/work) exit
 ```
@@ -107,18 +130,6 @@ sudo docker run --rm -it -w /work -v "${PWD}":/work python:3-alpine ash
 (/work) exit
 ```
 
-
-## ショートカットコマンド一覧
-
-makeコマンドによるショートカットを以下に示す。
-
-| makeコマンド | 操作内容 |
-| --- | --- |
-| make web.setup | WEBサーバを起動する |
-| make web.clean | WEBサーバをシャットダウンする |
-| make doc.create | ドキュメントを生成する |
-| make doc.deploy | WEBサーバへデプロイする |
-| make doc.clean | 生成したドキュメントを削除する |
 
 ## Reference
 

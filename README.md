@@ -109,8 +109,8 @@ sudo docker run --rm -it -w /work -v "${PWD}":/work alpine:latest ash
 (/work) apk add --no-cache gcc g++ libc-dev cpputest cpputest-static
 # 単体テスト実行
 (/work) cd cpp
-(/work) g++ -o hoge hoge.cpp -lCppUTest
-(/work) ./hoge
+(/work/cpp) g++ -o hoge hoge.cpp -lCppUTest
+(/work/cpp) ./hoge
 # ログアウト
 (/work) exit
 ```
